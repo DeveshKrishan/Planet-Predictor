@@ -2,6 +2,7 @@
 # https://images.nasa.gov/docs/images.nasa.gov_api_docs.pdf
 
 import requests
+from pathlib import Path
 import time
 
 class NasaScraper:
@@ -17,9 +18,27 @@ class NasaScraper:
         response = requests.get(url)
         if (response.status_code == 200):
             data = response.json()
+
+        dataset_folder = Path("dataset")
+        dataset_folder.mkdir(parents=True, exist_ok=True)
+
         for i, item in enumerate(data['collection']['items'][:5]): # limit to 5 pages
             image_url = item['links'][0]['href']
-            print(image_url)
+
+            folder_name = f"dataset/planet/{planet}"
+            folder_path = Path(folder_name)
+            folder_path.mkdir(parents=True, exist_ok=True) # create the folder if it doesn't exist
+
+            full_path = folder_path / f"{planet}_{i}.jpg"  # Rename the file to "test.jpg"
+
+            response = requests.get(image_url)
+
+            if response.status_code == 200:
+                with open(full_path, "wb") as file:
+                    file.write(response.content)
+            else:
+                print(f"Failed to download image from {image_url}")
+
         self.request_count += 1
 
 
