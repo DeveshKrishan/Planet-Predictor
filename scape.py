@@ -22,7 +22,7 @@ class NasaScraper:
         dataset_folder = Path("dataset")
         dataset_folder.mkdir(parents=True, exist_ok=True)
 
-        for i, item in enumerate(data['collection']['items'][:5]): # limit to 5 pages
+        for i, item in enumerate(data['collection']['items'][:400]): # limit to 5 pages
             image_url = item['links'][0]['href']
 
             folder_name = f"dataset/planet/{planet}"
@@ -36,6 +36,8 @@ class NasaScraper:
             if response.status_code == 200:
                 with open(full_path, "wb") as file:
                     file.write(response.content)
+                print(f"Image saved at {full_path}")
+
             else:
                 print(f"Failed to download image from {image_url}")
 
